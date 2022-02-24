@@ -6,7 +6,9 @@ import java.util.Scanner;
 class Board {
 	
 	ArrayList<Article> articles = new ArrayList<>();
+	ArrayList<Member> members = new ArrayList<>();
 	int lastestArticleNo = 4;
+	int lastestMemberNo = 1;
 	Scanner sc = new Scanner(System.in);
 	
 	public void run() {
@@ -191,7 +193,16 @@ class Board {
 		String loginPw = sc.nextLine();
 		System.out.print("닉네임을 입력해주세요 : ");
 		String nickname = sc.nextLine();
-
+		
+		Member member = new Member(lastestMemberNo, loginId, loginPw, nickname);
+		members.add(member);
+		lastestMemberNo++;
 		System.out.println("==== 회원가입이 완료되었습니다. ====");
+		
+		System.out.println("==== 현재 회원가입된 회원들 ====");
+		for(int i=0; i<members.size(); i++) {
+			System.out.println("ID : " + members.get(i).getLoginId());
+			System.out.println("닉네임 : " + members.get(i).getNickname());
+		}
 	}
 }
