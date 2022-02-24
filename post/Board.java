@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -28,13 +30,46 @@ class Board {
 
 			} else if(command.equals("delete")) {
 				delete();
+				
 			} else if(command.equals("search")) {
 				search();
-				
+			} else if(command.equals("read")) {
+				read();
+			} else if(command.equals("signup")) {
+				signup();
 			}
 		}
 	}
 	
+	private void printArticle(Article article) {
+		System.out.printf("===== %d번 게시물 =====\n", article.getIdx());
+		System.out.printf("번호 : %d\n", article.getIdx());
+		System.out.printf("제목 : %s\n", article.getTitle());
+		System.out.printf("작성자 : %s\n", article.getNickname());
+		System.out.printf("등록날짜 : %s\n", article.getRegDate());
+		System.out.printf("조회수 : %d\n", article.getHit());
+		System.out.printf("-----------------\n");
+		System.out.printf("내용 : %s\n", article.getBody());
+		System.out.printf("-----------------\n");
+		System.out.println("====================");
+	}
+	
+	private void read() {
+		System.out.print("상세보기할 게시물 번호를 입력해주세요 :");
+		int idx = Integer.parseInt(sc.nextLine());
+		
+		Article article = getArticleByIdx(idx);
+		
+		if(article != null) {
+			printArticle(article);
+      int currentHit = article.getHit();
+			article.setHit(currentHit + 1);	
+		} else {
+			System.out.println("없는 게시물입니다.");
+		}
+		
+	}
+
 	private void search() {
 		
 		System.out.print("검색 키워드를 입력해주세요 : ");
@@ -56,9 +91,9 @@ class Board {
 
 	private void init() {
 		
-		Article a1 = new Article(1, "제목1", "내용1");
-		Article a2 = new Article(2, "제목2", "내용2");
-		Article a3 = new Article(3, "제목2", "내용2");
+		Article a1 = new Article(1, "제목1", "내용1", "2022.02.24", 30, "익명");
+		Article a2 = new Article(2, "제목2", "내용2", "2022.02.24", 10, "익명");
+		Article a3 = new Article(3, "제목2", "내용2", "2022.02.24", 20, "익명");
 		
 		articles.add(a1);
 		articles.add(a2);
@@ -112,7 +147,11 @@ class Board {
 		System.out.print("내용을 입력해주세요 : ");
 		String body = sc.nextLine();
 
-		Article article = new Article(lastestArticleNo, title, body);
+		LocalDate now = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+		String formatedNow = now.format(formatter);
+		
+		Article article = new Article(lastestArticleNo, title, body, formatedNow, 0, "익명");
 		articles.add(article);
 		
 		System.out.println("게시물이 등록되었습니다.");
@@ -137,7 +176,22 @@ class Board {
 			
 			System.out.printf("번호 : %d\n", article.getIdx());
 			System.out.printf("제목 : %s\n", article.getTitle());
+			System.out.printf("작성자 : %s\n", article.getNickname());
+			System.out.printf("등록날짜 : %s\n", article.getRegDate());
+			System.out.printf("조회수 : %d\n", article.getHit());
 			System.out.println("========================");
 		}
+	}
+	
+	private void signup() {
+		System.out.println("==== 회원 가입을 진행합니다 ====");
+		System.out.print("아이디를 입력해주세요 : ");
+		String loginId = sc.nextLine();
+		System.out.print("비밀번호를 입력해주세요 : ");
+		String loginPw = sc.nextLine();
+		System.out.print("닉네임을 입력해주세요 : ");
+		String nickname = sc.nextLine();
+
+		System.out.println("==== 회원가입이 완료되었습니다. ====");
 	}
 }
