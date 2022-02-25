@@ -3,4 +3,5 @@ class Main {
 		Board myBoard = new Board();
 		myBoard.run();
 	}
+
 }

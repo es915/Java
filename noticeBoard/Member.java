@@ -1,9 +1,9 @@
-public class Member {
-	
-	private int idx;
-	private String loginId;
-	private String loginPw;
-	private String nickname;
+public abstract class Member {
+
+	protected int idx;
+	protected String loginId;
+	protected String loginPw;
+	protected String nickname;
 	
 	public Member() {}
 
@@ -15,6 +15,8 @@ public class Member {
 		this.nickname = nickname;
 	}
 
+	public abstract void intro(); 
+	
 	public int getIdx() {
 		return idx;
 	}

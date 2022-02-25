@@ -71,7 +71,7 @@ class Board {
 		if(member == null) {
 			System.out.println("잘못된 회원정보 입니다.");
 		} else {
-			System.out.printf("%s님 반갑습니다.\n", member.getNickname());
+			member.intro();
 			loginedMemberInfo = member;
 			isLogined = true;
 		}
@@ -93,6 +93,9 @@ class Board {
 
 	private void signup() {
 		  System.out.println("==== 회원 가입을 진행합니다 ====");
+		  System.out.println("회원을 구분해주세요 (1. 일반회원, 2. 우수회원): ");
+		  int gb = Integer.parseInt(sc.nextLine());
+		  
 		  System.out.print("아이디를 입력해주세요 : ");
 		  String loginId = sc.nextLine();
 		  System.out.print("비밀번호를 입력해주세요 : ");
@@ -100,9 +103,17 @@ class Board {
 		  System.out.print("닉네임을 입력해주세요 : ");
 		  String nickname = sc.nextLine();
 		  
-		  Member member = new Member(lastestMemberNo, loginId, loginPw, nickname);
+		  Member member = null;
+		  if (gb == 1) {
+			  
+			  member = new GeneralMember(lastestMemberNo, loginId, loginPw, nickname);
+
+		  } else {
+			  member = new SpecialMember(lastestMemberNo, loginId, loginPw, nickname, 0);
+		  }
 		  members.add(member);
 		  lastestMemberNo++;
+		  
 		  
 		  System.out.println("회원가입이 완료되었습니다.");
 		  
