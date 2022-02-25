@@ -7,15 +7,25 @@ class Board {
 	
 	ArrayList<Article> articles = new ArrayList<>();
 	ArrayList<Member> members = new ArrayList<>();
+	
 	int lastestArticleNo = 4;
 	int lastestMemberNo = 1;
 	Scanner sc = new Scanner(System.in);
+	
+	boolean isLogined = false; // 회원 로그인 여부
+	Member loginedMemberInfo = null; // 로그인 한 회원의 정보
 	
 	public void run() {
 		init();
 		
 		while (true) {
-			System.out.print("명령어를 입력해주세요 : ");
+			
+			if(isLogined == true) {
+				System.out.printf("명령어를 입력해주세요[%s(%s)]: ", loginedMemberInfo.getLoginId(), loginedMemberInfo.getNickname());	
+			} else {
+				System.out.println("명령어를 입력해주세요 : ");				
+			}
+			
 			String command = sc.nextLine();
 
 			if (command.equals("help")) {
@@ -35,14 +45,76 @@ class Board {
 				
 			} else if(command.equals("search")) {
 				search();
+				
 			} else if(command.equals("read")) {
 				read();
+				
 			} else if(command.equals("signup")) {
 				signup();
+				
+			} else if(command.equals("signin")) {
+				signin();
 			}
 		}
 	}
 	
+
+	private void signin() {
+		
+		System.out.print("아이디 : ");
+		String loginId = sc.nextLine();
+		System.out.print("비밀번호 : ");
+		String loginPw = sc.nextLine();
+		
+		Member member  = getMemberByLoginInfo(loginId, loginPw);
+		
+		if(member == null) {
+			System.out.println("잘못된 회원정보 입니다.");
+		} else {
+			System.out.printf("%s님 반갑습니다.\n", member.getNickname());
+			loginedMemberInfo = member;
+			isLogined = true;
+		}
+	}
+	
+	private Member getMemberByLoginInfo(String loginId, String loginPw) {
+		for(int i = 0; i < members.size(); i++) {
+			Member member = members.get(i);
+			
+			if(member.getLoginId().equals(loginId)) {
+				if(member.getLoginPw().equals(loginPw)) {
+					return member;
+				}
+			}
+		}
+		
+		return null;
+	}
+
+	private void signup() {
+		  System.out.println("==== 회원 가입을 진행합니다 ====");
+		  System.out.print("아이디를 입력해주세요 : ");
+		  String loginId = sc.nextLine();
+		  System.out.print("비밀번호를 입력해주세요 : ");
+		  String loginPw = sc.nextLine();
+		  System.out.print("닉네임을 입력해주세요 : ");
+		  String nickname = sc.nextLine();
+		  
+		  Member member = new Member(lastestMemberNo, loginId, loginPw, nickname);
+		  members.add(member);
+		  lastestMemberNo++;
+		  
+		  System.out.println("회원가입이 완료되었습니다.");
+		  
+		  System.out.println("현재 가입된 회원들 : ");
+		  for(int i = 0; i < members.size(); i++) {
+			  System.out.println(members.get(i).getLoginId());
+			  System.out.println(members.get(i).getNickname());
+			  System.out.println("============================");
+		  }
+		  
+	}
+
 	private void printArticle(Article article) {
 		System.out.printf("===== %d번 게시물 =====\n", article.getIdx());
 		System.out.printf("번호 : %d\n", article.getIdx());
@@ -64,8 +136,9 @@ class Board {
 		
 		if(article != null) {
 			printArticle(article);
-      int currentHit = article.getHit();
-			article.setHit(currentHit + 1);	
+			int currentHit = article.getHit();
+			article.setHit(currentHit + 1);			
+			
 		} else {
 			System.out.println("없는 게시물입니다.");
 		}
@@ -182,27 +255,6 @@ class Board {
 			System.out.printf("등록날짜 : %s\n", article.getRegDate());
 			System.out.printf("조회수 : %d\n", article.getHit());
 			System.out.println("========================");
-		}
-	}
-	
-	private void signup() {
-		System.out.println("==== 회원 가입을 진행합니다 ====");
-		System.out.print("아이디를 입력해주세요 : ");
-		String loginId = sc.nextLine();
-		System.out.print("비밀번호를 입력해주세요 : ");
-		String loginPw = sc.nextLine();
-		System.out.print("닉네임을 입력해주세요 : ");
-		String nickname = sc.nextLine();
-		
-		Member member = new Member(lastestMemberNo, loginId, loginPw, nickname);
-		members.add(member);
-		lastestMemberNo++;
-		System.out.println("==== 회원가입이 완료되었습니다. ====");
-		
-		System.out.println("==== 현재 회원가입된 회원들 ====");
-		for(int i=0; i<members.size(); i++) {
-			System.out.println("ID : " + members.get(i).getLoginId());
-			System.out.println("닉네임 : " + members.get(i).getNickname());
 		}
 	}
 }
