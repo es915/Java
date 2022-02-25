@@ -1,6 +1,6 @@
-
 public class Member {
-	private int idx; // 식별 데이터
+	
+	private int idx;
 	private String loginId;
 	private String loginPw;
 	private String nickname;
@@ -46,6 +46,5 @@ public class Member {
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
-
 	
 }
