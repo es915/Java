@@ -7,9 +7,11 @@ class Board {
 	
 	ArrayList<Article> articles = new ArrayList<>();
 	ArrayList<Member> members = new ArrayList<>();
+	ArrayList<Reply> replies = new ArrayList<>();
 	
 	int lastestArticleNo = 4;
-	int lastestMemberNo = 1;
+	int lastestMemberNo = 2;
+	int lastestReplyNo = 1;
 	Scanner sc = new Scanner(System.in);
 	
 	boolean isLogined = false; // 회원 로그인 여부
@@ -47,7 +49,11 @@ class Board {
 				search();
 				
 			} else if(command.equals("read")) {
-				read();
+				if(isLogined == true) {					
+					read();
+				} else {
+					System.out.println("로그인이 필요한 기능입니다.");
+				}
 				
 			} else if(command.equals("signup")) {
 				signup();
@@ -117,13 +123,6 @@ class Board {
 		  
 		  System.out.println("회원가입이 완료되었습니다.");
 		  
-		  System.out.println("현재 가입된 회원들 : ");
-		  for(int i = 0; i < members.size(); i++) {
-			  System.out.println(members.get(i).getLoginId());
-			  System.out.println(members.get(i).getNickname());
-			  System.out.println("============================");
-		  }
-		  
 	}
 
 	private void printArticle(Article article) {
@@ -137,8 +136,61 @@ class Board {
 		System.out.printf("내용 : %s\n", article.getBody());
 		System.out.printf("-----------------\n");
 		System.out.println("====================");
+		System.out.println("======= 댓글 ========");
+		for(int i = 0; i < replies.size(); i++) {
+			if(article.getIdx() == replies.get(i).getParentIdx()) {
+				System.out.printf("내용  : %s\n", replies.get(i).getBody());
+				System.out.printf("작성자 : %s\n", replies.get(i).getNickname());
+				System.out.printf("작성일 : %s\n", replies.get(i).getRegDate());
+				System.out.println("====================");
+			}
+		}
+	
 	}
 	
+	private void readProcess(Article article) {
+		while(true) {
+			System.out.print("상세보기 기능을 선택해주세요(1. 댓글 등록, 2. 좋아요, 3. 수정, 4. 삭제, 5. 목록으로) : ");
+			int readCmd = Integer.parseInt(sc.nextLine());
+			
+			if(readCmd == 1) {
+
+				addReply(article);
+				
+			} else if(readCmd == 2) {
+				System.out.println("좋아요");
+			} else if(readCmd == 3) {
+				System.out.println("수정");
+			} else if(readCmd == 4) {
+				System.out.println("삭제");
+			} else if(readCmd == 5) {
+				System.out.println("목록으로");
+				break;
+			} 			
+		}
+		
+	}
+	
+	private void addReply(Article article) {
+		System.out.print("댓글 내용을 입력해주세요 :");
+		String replyBody = sc.nextLine();
+		//2. 작성자
+		String nickname = loginedMemberInfo.getNickname();
+		//3. 작성일
+		String regDate =  getCurrentDate();
+		//4. idx
+		
+		//5. 부모글번호
+		int parentIdx = article.getIdx();
+		
+		Reply reply = new Reply(lastestReplyNo, parentIdx, replyBody, nickname, regDate);
+		replies.add(reply);
+		System.out.println("댓글이 등록되었습니다.");
+		printArticle(article);
+		
+	}
+
+
 	private void read() {
 		System.out.print("상세보기할 게시물 번호를 입력해주세요 :");
 		int idx = Integer.parseInt(sc.nextLine());
@@ -149,6 +201,7 @@ class Board {
 			printArticle(article);
 			int currentHit = article.getHit();
 			article.setHit(currentHit + 1);			
+			readProcess(article);
 			
 		} else {
 			System.out.println("없는 게시물입니다.");
@@ -181,9 +234,17 @@ class Board {
 		Article a2 = new Article(2, "제목2", "내용2", "2022.02.24", 10, "익명");
 		Article a3 = new Article(3, "제목2", "내용2", "2022.02.24", 20, "익명");
 		
+		Member m1 = new GeneralMember(1, "hong123", "h1234", "홍길동");
+		
 		articles.add(a1);
 		articles.add(a2);
 		articles.add(a3);
+		
+		members.add(m1);
+		
+		loginedMemberInfo = m1;
+		isLogined = true;
+		
 		
 	}
 
@@ -232,12 +293,8 @@ class Board {
 		String title = sc.nextLine();
 		System.out.print("내용을 입력해주세요 : ");
 		String body = sc.nextLine();
-
-		LocalDate now = LocalDate.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
-		String formatedNow = now.format(formatter);
 		
-		Article article = new Article(lastestArticleNo, title, body, formatedNow, 0, "익명");
+		Article article = new Article(lastestArticleNo, title, body, getCurrentDate(), 0, "익명");
 		articles.add(article);
 		
 		System.out.println("게시물이 등록되었습니다.");
@@ -268,4 +325,14 @@ class Board {
 			System.out.println("========================");
 		}
 	}
+	
+	private String getCurrentDate() {
+		
+		LocalDate now = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+		String formatedNow = now.format(formatter);
+		
+		return formatedNow;
+	}
+	
 }
